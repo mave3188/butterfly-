@@ -6,7 +6,7 @@ run: setup
 	@echo "⏳ Memuat VORTHIX..."
 	@bash -c 'for i in {1..10}; do printf "█"; sleep 0.1; done; echo " 100%"'
 	@echo "🚀 Menjalankan spammer.py..."
-	@python3 spammer.py
+	@python3 spammer
 
 setup:
 	@echo "🔧 Memeriksa dependensi..."
