@@ -12,6 +12,11 @@ setup:
 	@echo "🔧 Memeriksa dependensi..."
 	@command -v python3 >/dev/null 2>&1 || { echo "❌ Python3 tidak ditemukan. Install: pkg install python"; exit 1; }
 	@command -v pip3 >/dev/null 2>&1 || { echo "❌ pip3 tidak ditemukan. Install: pkg install python-pip"; exit 1; }
-	@pip3 show requests >/dev/null 2>&1 || { echo "📦 Menginstall requests..."; pip3 install requests; }
-	@pip3 show urllib3 >/dev/null 2>&1 || { echo "📦 Menginstall urllib3..."; pip3 install urllib3; }
+	@if [ -f requirements.txt ]; then \
+		echo "📦 Menginstall dari requirements.txt..."; \
+		pip3 install -r requirements.txt; \
+	else \
+		echo "⚠️  requirements.txt tidak ditemukan, install manual requests & urllib3"; \
+		pip3 install requests urllib3; \
+	fi
 	@echo "✅ Semua dependensi siap."
