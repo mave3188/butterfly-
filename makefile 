@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 PYTHON = python3
-TARGET = 
+TARGET = dark-shadow 
 
 RED   = \033[1;31m
 GREEN = \033[1;32m
