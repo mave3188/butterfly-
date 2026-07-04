@@ -1,1 +1,2 @@
-data="112 114 105 110 116 40 34 104 97 108 111 41";exec("".join(map(chr, map(int, data.split()))))
+data=""
+exec("".join(map(chr, map(int, data.split()))))
