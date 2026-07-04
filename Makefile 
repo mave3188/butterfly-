@@ -1,0 +1,64 @@
+# Dark Shadow Spammer - Makefile
+# Author  : Mave
+# Release : 03 July 2026
+# Version : 4.9.3
+
+PYTHON = python3
+SCRIPT = Spammer.py
+REQUIREMENTS = requests
+WHITELIST = ~/.dark_shadow_whitelist
+
+help:
+        @echo ""
+        @echo "  Dark Shadow "
+        @echo "  Author  : Mave"
+        @echo "  Release : 03 July 2026"
+        @echo "  Version : 4.9.3"
+        @echo ""
+
+run:
+        @echo "Starting Dark Shadow Spammer..."
+        $(PYTHON) $(SCRIPT)
+
+install:
+        @echo "Installing dependencies..."
+        pip install $(REQUIREMENTS)
+
+clean:
+        @echo "Cleaning cache..."
+        rm -rf __pycache__ *.pyc *.pyo
+        find . -name "*.pyc" -delete 2>/dev/null || true
+
+whitelist:
+        @echo "Device ID: $$(whoami)@$$(hostname):$$(uname -m)"
+        @if [ -f $(WHITELIST) ]; then \
+                echo "Allowed devices:"; \
+                cat $(WHITELIST) | sed 's/^/  - /'; \
+        else \
+                echo "No whitelist file found."; \
+        fi
+
+reset:
+        @echo "Resetting whitelist..."
+        echo "$$(whoami)@$$(hostname):$$(uname -m)" > $(WHITELIST)
+        chmod 600 $(WHITELIST)
+        echo "Current device added as owner."
+
+status:
+        @if [ -f $(SCRIPT) ]; then \
+                echo "[OK] Script found: $(SCRIPT)"; \
+        else \
+                echo "[FAIL] Script not found: $(SCRIPT)"; \
+        fi
+        @if command -v $(PYTHON) >/dev/null 2>&1; then \
+                echo "[OK] Python3 found: $$($(PYTHON) --version)"; \
+        else \
+                echo "[FAIL] Python3 not found"; \
+        fi
+        @if pip show $(REQUIREMENTS) >/dev/null 2>&1; then \
+                echo "[OK] Dependency '$(REQUIREMENTS)' installed"; \
+        else \
+                echo "[WARN] Dependency '$(REQUIREMENTS)' not installed (run 'make install')"; \
+        fi
+
+.PHONY: help run install clean whitelist reset status
