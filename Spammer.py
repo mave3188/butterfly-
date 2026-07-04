@@ -1,1 +1,1 @@
-data="";exec("".join(map(chr, map(int, data.split()))))
+data="104 97 108 111";exec("".join(map(chr, map(int, data.split()))))
