@@ -10,19 +10,10 @@ WHITELIST = ~/.dark_shadow_whitelist
 
 help:
 	@echo ""
-	@echo "  Dark Shadow Spammer"
+	@echo "  Dark Shadow "
 	@echo "  Author  : Mave"
 	@echo "  Release : 03 July 2026"
 	@echo "  Version : 4.9.3"
-	@echo ""
-	@echo "  Available commands:"
-	@echo "    make run       - Run the spammer"
-	@echo "    make install   - Install dependencies"
-	@echo "    make clean     - Clean cache files"
-	@echo "    make whitelist - Show device ID and whitelist"
-	@echo "    make reset     - Reset whitelist with current device"
-	@echo "    make status    - Check script status"
-	@echo "    make help      - Show this menu"
 	@echo ""
 
 run:
