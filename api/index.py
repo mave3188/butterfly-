@@ -1,3 +1,4 @@
+# api/index.py - Web Server Vercel (dengan fitur hapus ID)
 import os
 import hashlib
 from flask import Flask, request, render_template_string, session, redirect, url_for
@@ -47,6 +48,16 @@ def add_whitelist(device_id):
         return True
     return False
 
+def delete_whitelist(device_id):
+    ids = get_whitelist()
+    if device_id in ids:
+        ids.remove(device_id)
+        with open(WHITELIST_FILE, 'w') as f:
+            f.write('\n'.join(ids) + '\n')
+        os.chmod(WHITELIST_FILE, 0o600)
+        return True
+    return False
+
 LOGIN_HTML = """
 <!DOCTYPE html>
 <html>
@@ -83,11 +94,13 @@ DASHBOARD_HTML = """
     <title>DARK SHY - Dashboard</title>
     <style>
         body { background: #0d0d0d; color: #ccc; font-family: monospace; padding: 20px; }
-        .container { max-width: 700px; margin: auto; }
+        .container { max-width: 800px; margin: auto; }
         h1 { color: #a855f7; }
         .card { background: #1a1a1a; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 3px solid #7a3b9e; }
-        .id-item { background: #2a2a2a; padding: 8px 12px; margin: 5px 0; border-radius: 4px; color: #a855f7; }
-        .id-item span { color: #888; }
+        .id-item { background: #2a2a2a; padding: 8px 12px; margin: 5px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .id-item .id-text { color: #a855f7; }
+        .id-item .btn-delete { background: #b91c1c; color: #fff; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .id-item .btn-delete:hover { background: #ff4444; }
         input[type="text"] { padding: 10px; width: 70%; background: #2a2a2a; border: 1px solid #555; color: #fff; border-radius: 4px; }
         input[type="submit"] { padding: 10px 20px; background: #7a3b9e; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
         .btn { display: inline-block; padding: 8px 16px; background: #333; color: #fff; text-decoration: none; border-radius: 4px; margin-top: 10px; }
@@ -115,7 +128,13 @@ DASHBOARD_HTML = """
             <h3>Daftar Device</h3>
             {% if ids %}
                 {% for id in ids %}
-                <div class="id-item">🔮 {{ id }}</div>
+                <div class="id-item">
+                    <span class="id-text">🔮 {{ id }}</span>
+                    <form method="POST" action="/delete" style="display:inline;">
+                        <input type="hidden" name="device_id" value="{{ id }}">
+                        <input type="submit" class="btn-delete" value="Hapus" onclick="return confirm('Yakin hapus ID {{ id }}?')">
+                    </form>
+                </div>
                 {% endfor %}
             {% else %}
                 <p style="color:#666;">Belum ada device.</p>
@@ -155,6 +174,20 @@ def add_device():
             msg = f"✅ {device_id} berhasil ditambahkan"
         else:
             msg = f"⚠️ {device_id} sudah terdaftar"
+    ids = get_whitelist()
+    return render_template_string(DASHBOARD_HTML, ids=ids, total=len(ids), msg=msg)
+
+@app.route('/delete', methods=['POST'])
+def delete_device():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    device_id = request.form.get('device_id', '').strip()
+    msg = ''
+    if device_id:
+        if delete_whitelist(device_id):
+            msg = f"🗑️ {device_id} berhasil dihapus"
+        else:
+            msg = f"⚠️ {device_id} tidak ditemukan"
     ids = get_whitelist()
     return render_template_string(DASHBOARD_HTML, ids=ids, total=len(ids), msg=msg)
 
