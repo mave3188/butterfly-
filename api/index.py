@@ -5,7 +5,7 @@ from flask import Flask, request, render_template_string, session, redirect, url
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'rahasia_dark_shy_default')
 
-# Gunakan /tmp untuk writable storage di Vercel (file akan hilang saat redeploy)
+# Gunakan /tmp untuk writable storage di Vercel
 WHITELIST_FILE = "/tmp/whitelist.txt"
 PASS_FILE = "/tmp/admin_pass.txt"
 
@@ -13,22 +13,16 @@ def hash_password(pwd):
     return hashlib.sha256(pwd.encode()).hexdigest()
 
 def get_admin_password():
-    # Cek environment variable ADMIN_PASSWORD, jika ada gunakan itu
     env_pwd = os.environ.get('ADMIN_PASSWORD')
     if env_pwd:
         return hash_password(env_pwd)
-    # Jika tidak ada, buat default (tapi tampilkan warning)
-    default = "admin123"
-    print("[WARN] ADMIN_PASSWORD tidak diset, menggunakan default: admin123")
-    return hash_password(default)
+    return hash_password("admin123")
 
 def setup_password():
-    # Di Vercel, kita tidak bisa input interaktif, jadi kita buat password dari env atau default
     if not os.path.exists(PASS_FILE):
         with open(PASS_FILE, 'w') as f:
             f.write(get_admin_password())
         os.chmod(PASS_FILE, 0o600)
-        print("[+] Password admin tersimpan.")
 
 def check_password(pwd):
     if not os.path.exists(PASS_FILE):
@@ -54,6 +48,7 @@ def add_whitelist(device_id):
         return True
     return False
 
+# --- HTML Template ---
 LOGIN_HTML = """
 <!DOCTYPE html>
 <html>
@@ -134,6 +129,7 @@ DASHBOARD_HTML = """
 </html>
 """
 
+# --- Routes ---
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -170,7 +166,5 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-# Vercel akan memanggil 'app' sebagai entry point
-if __name__ == '__main__':
-    # Hanya untuk testing lokal, Vercel tidak pakai ini
-    app.run(debug=True)
+# --- Vercel akan menggunakan variabel `app` ini ---
+# Tidak perlu `if __name__ == '__main__'`
