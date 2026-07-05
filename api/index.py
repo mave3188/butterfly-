@@ -1,7 +1,6 @@
-# api/index.py - Web Server Vercel (dengan fitur hapus ID)
 import os
 import hashlib
-from flask import Flask, request, render_template_string, session, redirect, url_for
+from flask import Flask, request, render_template_string, session, redirect, url_for, jsonify
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'rahasia_dark_shy_default')
@@ -137,7 +136,7 @@ DASHBOARD_HTML = """
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="color:#666;">Belum ada device.</p>
+                <p style="color:#666;">Belum ada device terdaftar.</p>
             {% endif %}
         </div>
         <div class="footer">DARK SHY - Only the chosen</div>
@@ -199,4 +198,10 @@ def logout():
 @app.route('/whitelist')
 def whitelist():
     ids = get_whitelist()
-    return {'ids': ids}
+    return jsonify({'ids': ids})
+
+@app.route('/debug')
+def debug():
+    """Cek isi whitelist langsung di browser"""
+    ids = get_whitelist()
+    return f"<pre>Whitelist saat ini:\n{chr(10).join(ids) if ids else '(kosong)'}</pre>"
