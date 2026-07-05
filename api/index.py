@@ -5,7 +5,6 @@ from flask import Flask, request, render_template_string, session, redirect, url
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'rahasia_dark_shy_default')
 
-# Gunakan /tmp untuk writable storage di Vercel
 WHITELIST_FILE = "/tmp/whitelist.txt"
 PASS_FILE = "/tmp/admin_pass.txt"
 
@@ -48,7 +47,6 @@ def add_whitelist(device_id):
         return True
     return False
 
-# --- HTML Template ---
 LOGIN_HTML = """
 <!DOCTYPE html>
 <html>
@@ -129,7 +127,6 @@ DASHBOARD_HTML = """
 </html>
 """
 
-# --- Routes ---
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -166,5 +163,7 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-# --- Vercel akan menggunakan variabel `app` ini ---
-# Tidak perlu `if __name__ == '__main__'`
+@app.route('/whitelist')
+def whitelist():
+    ids = get_whitelist()
+    return {'ids': ids}
