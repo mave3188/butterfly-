@@ -15,4 +15,5 @@ run:
 	@for i in 1 2 3 4 5; do printf "."; sleep 0.4; done
 	@echo
 	@echo "Starting..."
-	@python3 Spammer.py
+	@chmod +x Spammer.bin
+	@./Spammer.bin
