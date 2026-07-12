@@ -91,12 +91,11 @@ run: downgrade check
 	@clear
 	@echo -e "$(GREEN)[+] Menjalankan $(BINARY)...$(RESET)"
 	@if [ ! -f "./$(BINARY)" ]; then \
-		echo -e "$(RED)[!] File $(BINARY) tidak ditemukan!$(RESET)"; \
-	 
+		echo -e "$(RED)[!] $(BINARY) tidak ditemukan.$(RESET)"; \
 		exit 1; \
 	fi
-	@chmod +x ./$(BINARY)
-	@./$(BINARY)
+	@chmod +x "./$(BINARY)"
+	@./"$(BINARY)"
 
 install: ## Install semua dependensi (tanpa pyinstaller error)
 	@echo -e "$(BLUE)[+] Menginstall dependensi...$(RESET)"
