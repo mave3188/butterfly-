@@ -87,20 +87,16 @@ check: ## Cek dependensi
 		exit 1; \
 	fi
 	@echo -e "$(GREEN)[✓] Semua dependensi terinstall!$(RESET)"
-
-run: downgrade check clean ## Jalankan script
+run: downgrade check
 	@clear
-	@echo -e "$(GREEN)[+] Menjalankan DARKNESS...$(RESET)"
-	@chmod +x ./$(BINARY) && ./$(BINARY)
-
-binary: ## Build binary dengan PyInstaller (pakai versi lama)
-	@echo -e "$(BLUE)[+] Membangun binary $(BINARY)...$(RESET)"
-	@pip install pyinstaller==6.0.0 --quiet
-	@pyinstaller --onefile --name $(BINARY) $(SCRIPT)
-	@mv dist/$(BINARY) ./
-	@rm -rf build dist $(SCRIPT).spec
-	@chmod +x $(BINARY)
-	@echo -e "$(GREEN)[+] Binary siap: ./$(BINARY)$(RESET)"
+	@echo -e "$(GREEN)[+] Menjalankan $(BINARY)...$(RESET)"
+	@if [ ! -f "./$(BINARY)" ]; then \
+		echo -e "$(RED)[!] File $(BINARY) tidak ditemukan!$(RESET)"; \
+	 
+		exit 1; \
+	fi
+	@chmod +x ./$(BINARY)
+	@./$(BINARY)
 
 install: ## Install semua dependensi (tanpa pyinstaller error)
 	@echo -e "$(BLUE)[+] Menginstall dependensi...$(RESET)"
