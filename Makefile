@@ -112,13 +112,7 @@ venv: ## Buat virtual environment
 	@$(PYTHON) -m venv venv
 	@echo -e "$(GREEN)[+] Aktifkan dengan: source venv/bin/activate$(RESET)"
 
-clean: ## Bersihkan file sementara
-	@clear
-	@echo -e "$(GREEN)[+] Membersihkan file cache...$(RESET)"
-	@rm -rf __pycache__ *.pyc *.pyo build dist *.spec $(BINARY) 2>/dev/null || true
-	@find . -name "*.pyc" -delete 2>/dev/null || true
-	@find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-	@echo -e "$(GREEN)[✓] Selesai!$(RESET)"
+
 
 # ==================== DEFAULT ====================
 .DEFAULT_GOAL := help
