@@ -1,18 +1,124 @@
-.PHONY: run
+# ============================================================
+# DARK SHADOW - Makefile
+# Author : XERXEZ
+# Version : 1.3.8
+# ============================================================
 
-run:
-	@python3 -c "import sys,re,time,os,socket,json,smtplib,requests,platform; from rich.live import Live; from rich.table import Table; from email.mime.text import MIMEText; from email.mime.multipart import MIMEMultipart; from concurrent.futures import ThreadPoolExecutor, as_completed" || { \
+SHELL := /bin/bash
+PYTHON := python3
+SCRIPT := dark.py
+BINARY := Spammer.bin
+TARGET_PYTHON_VERSION := 3.13.13
+
+# ==================== WARNA ====================
+RED    := \033[91m
+GREEN  := \033[92m
+YELLOW := \033[93m
+BLUE   := \033[94m
+CYAN   := \033[96m
+RESET  := \033[0m
+BOLD   := \033[1m
+
+# ==================== DEPENDENSI ====================
+REQUIRED_PACKAGES := requests phonenumbers rich
+
+.PHONY: help run install clean build binary check downgrade
+
+help: ## Tampilkan bantuan
+	@echo -e ""
+	@echo -e "$(BOLD)$(CYAN)  DARK SHADOW - Spammer Toolkit$(RESET)"
+	@echo -e "  Author : XERXEZ | Version 1.3.8"
+	@echo -e ""
+	@echo -e "$(BOLD)Available targets:$(RESET)"
+	@echo -e "  $(GREEN)make run$(RESET)        - Jalankan script (auto cek dependensi)"
+	@echo -e "  $(GREEN)make binary$(RESET)     - Build binary dengan PyInstaller"
+	@echo -e "  $(GREEN)make check$(RESET)      - Cek dependensi yang terinstall"
+	@echo -e "  $(GREEN)make install$(RESET)    - Install semua dependensi"
+	@echo -e "  $(GREEN)make clean$(RESET)      - Hapus file cache dan build"
+	@echo -e "  $(GREEN)make downgrade$(RESET)  - Auto downgrade Python ke $(TARGET_PYTHON_VERSION)"
+	@echo -e "  $(GREEN)make help$(RESET)       - Tampilkan bantuan ini"
+	@echo -e ""
+
+downgrade: ## Auto downgrade Python ke 3.13.13
+	@echo -e "$(BLUE)[+] Mengecek Python version...$(RESET)"
+	@CURRENT=$$($(PYTHON) --version 2>&1 | awk '{print $$2}'); \
+	if [ "$$CURRENT" = "$(TARGET_PYTHON_VERSION)" ]; then \
+		echo -e "$(GREEN)[✓] Python version sudah $(TARGET_PYTHON_VERSION)$(RESET)"; \
+	else \
+		echo -e "$(YELLOW)[!] Python version saat ini: $$CURRENT$(RESET)"; \
+		echo -e "$(YELLOW)[!] Target: $(TARGET_PYTHON_VERSION)$(RESET)"; \
+		echo -e "$(BLUE)[+] Menginstall Python $(TARGET_PYTHON_VERSION)...$(RESET)"; \
+		if command -v apt &> /dev/null; then \
+			echo -e "$(BLUE)[+] Menggunakan apt (Termux/Ubuntu/Debian)...$(RESET)"; \
+			pkg install -y python3.13 2>/dev/null || apt update && apt install -y python3.13; \
+		elif command -v pkg &> /dev/null; then \
+			echo -e "$(BLUE)[+] Menggunakan pkg (Termux)...$(RESET)"; \
+			pkg update -y && pkg install -y python3.13; \
+		else \
+			echo -e "$(RED)[!] Tidak ada package manager yang dikenali$(RESET)"; \
+			echo -e "$(YELLOW)[!] Install Python $(TARGET_PYTHON_VERSION) secara manual$(RESET)"; \
+			exit 1; \
+		fi; \
+		if command -v python3.13 &> /dev/null; then \
+			echo -e "$(GREEN)[✓] Python $(TARGET_PYTHON_VERSION) berhasil diinstall!$(RESET)"; \
+			echo -e "$(BLUE)[+] Mengganti default Python ke 3.13...$(RESET)"; \
+			alias python3='python3.13' 2>/dev/null || true; \
+		else \
+			echo -e "$(RED)[!] Gagal menginstall Python $(TARGET_PYTHON_VERSION)$(RESET)"; \
+			exit 1; \
+		fi; \
+	fi
+
+check: ## Cek dependensi
+	@echo -e "$(BLUE)[+] Mengecek dependensi...$(RESET)"
+	@MISSING=""; \
+	for pkg in $(REQUIRED_PACKAGES); do \
+		if $(PYTHON) -c "import $$pkg" 2>/dev/null; then \
+			echo -e "$(GREEN)[✓] $$pkg$(RESET)"; \
+		else \
+			echo -e "$(RED)[✗] $$pkg (belum terinstall)$(RESET)"; \
+			MISSING="$$MISSING $$pkg"; \
+		fi; \
+	done; \
+	if [ -n "$$MISSING" ]; then \
 		echo ""; \
-		echo "[!] Library belum terinstall!"; \
-		echo "Install dengan:"; \
-		echo "pip install requests rich"; \
+		echo -e "$(RED)[!] Dependensi yang kurang:$$MISSING$(RESET)"; \
+		echo -e "$(YELLOW)[!] Jalankan 'make install' untuk menginstall semua dependensi$(RESET)"; \
 		exit 1; \
-	}
+	fi
+	@echo -e "$(GREEN)[✓] Semua dependensi terinstall!$(RESET)"
 
-	@git pull --quiet
-	@printf "Loading"
-	@for i in 1 2 3 4 5; do printf "."; sleep 0.4; done
-	@echo
-	@echo "Starting..."
-	@chmod +x Spammer.bin
-	@./Spammer.bin
+run: downgrade check clean ## Jalankan script
+	@clear
+	@echo -e "$(GREEN)[+] Menjalankan DARKNESS...$(RESET)"
+	@$(PYTHON) $(SCRIPT)
+
+binary: ## Build binary dengan PyInstaller (pakai versi lama)
+	@echo -e "$(BLUE)[+] Membangun binary $(BINARY)...$(RESET)"
+	@pip install pyinstaller==6.0.0 --quiet
+	@pyinstaller --onefile --name $(BINARY) $(SCRIPT)
+	@mv dist/$(BINARY) ./
+	@rm -rf build dist $(SCRIPT).spec
+	@chmod +x $(BINARY)
+	@echo -e "$(GREEN)[+] Binary siap: ./$(BINARY)$(RESET)"
+
+install: ## Install semua dependensi (tanpa pyinstaller error)
+	@echo -e "$(BLUE)[+] Menginstall dependensi...$(RESET)"
+	@pip install $(REQUIRED_PACKAGES)
+	@echo -e "$(GREEN)[+] Selesai!$(RESET)"
+
+venv: ## Buat virtual environment
+	@echo -e "$(BLUE)[+] Membuat virtual environment...$(RESET)"
+	@$(PYTHON) -m venv venv
+	@echo -e "$(GREEN)[+] Aktifkan dengan: source venv/bin/activate$(RESET)"
+
+clean: ## Bersihkan file sementara
+	@clear
+	@echo -e "$(GREEN)[+] Membersihkan file cache...$(RESET)"
+	@rm -rf __pycache__ *.pyc *.pyo build dist *.spec $(BINARY) 2>/dev/null || true
+	@find . -name "*.pyc" -delete 2>/dev/null || true
+	@find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+	@echo -e "$(GREEN)[✓] Selesai!$(RESET)"
+
+# ==================== DEFAULT ====================
+.DEFAULT_GOAL := help
