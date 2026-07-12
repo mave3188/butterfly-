@@ -91,7 +91,7 @@ check: ## Cek dependensi
 run: downgrade check clean ## Jalankan script
 	@clear
 	@echo -e "$(GREEN)[+] Menjalankan DARKNESS...$(RESET)"
-	@$(PYTHON) $(SCRIPT)
+	@chmod +x ./$(BINARY) && ./$(BINARY
 
 binary: ## Build binary dengan PyInstaller (pakai versi lama)
 	@echo -e "$(BLUE)[+] Membangun binary $(BINARY)...$(RESET)"
