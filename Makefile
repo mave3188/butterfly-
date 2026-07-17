@@ -22,24 +22,7 @@ BOLD   := \033[1m
 # ==================== DEPENDENSI ====================
 REQUIRED_PACKAGES := requests phonenumbers rich
 
-.PHONY: help run install clean build binary check downgrade
-
-help: ## Tampilkan bantuan
-	@echo -e ""
-	@echo -e "$(BOLD)$(CYAN)  DARK SHADOW - Spammer Toolkit$(RESET)"
-	@echo -e "  Author : XERXEZ | Version 1.3.8"
-	@echo -e ""
-	@echo -e "$(BOLD)Available targets:$(RESET)"
-	@echo -e "  $(GREEN)make run$(RESET)        - Jalankan Spammer.py (auto cek dependensi)"
-	@echo -e "  $(GREEN)make binary$(RESET)     - Build binary Spammer.bin dari Spammer.py"
-	@echo -e "  $(GREEN)make check$(RESET)      - Cek dependensi yang terinstall"
-	@echo -e "  $(GREEN)make install$(RESET)    - Install semua dependensi"
-	@echo -e "  $(GREEN)make clean$(RESET)      - Hapus file cache dan build"
-	@echo -e "  $(GREEN)make downgrade$(RESET)  - Auto downgrade Python ke $(TARGET_PYTHON_VERSION)"
-	@echo -e "  $(GREEN)make help$(RESET)       - Tampilkan bantuan ini"
-	@echo -e ""
-
-TARGET_PYTHON_VERSION := 3.13.5
+.PHONY:  run install build check downgrade
 
 downgrade:
 	@echo "[+] Menyiapkan Python $(TARGET_PYTHON_VERSION)..."
