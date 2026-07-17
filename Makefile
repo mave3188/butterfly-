@@ -8,7 +8,7 @@ SHELL := /bin/bash
 PYTHON := python3
 SCRIPT := Spammer.py
 BINARY := Spammer.bin
-TARGET_PYTHON_VERSION := 3.13.13
+TARGET_PYTHON_VERSION := 3.13.5
 
 # ==================== WARNA ====================
 RED    := \033[91m
