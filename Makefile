@@ -39,35 +39,23 @@ help: ## Tampilkan bantuan
 	@echo -e "  $(GREEN)make help$(RESET)       - Tampilkan bantuan ini"
 	@echo -e ""
 
-downgrade: ## Auto downgrade Python ke 3.13.13
-	@echo -e "$(BLUE)[+] Mengecek Python version...$(RESET)"
-	@CURRENT=$$($(PYTHON) --version 2>&1 | awk '{print $$2}'); \
-	if [ "$$CURRENT" = "$(TARGET_PYTHON_VERSION)" ]; then \
-		echo -e "$(GREEN)[✓] Python version sudah $(TARGET_PYTHON_VERSION)$(RESET)"; \
-	else \
-		echo -e "$(YELLOW)[!] Python version saat ini: $$CURRENT$(RESET)"; \
-		echo -e "$(YELLOW)[!] Target: $(TARGET_PYTHON_VERSION)$(RESET)"; \
-		echo -e "$(BLUE)[+] Menginstall Python $(TARGET_PYTHON_VERSION)...$(RESET)"; \
-		if command -v apt &> /dev/null; then \
-			echo -e "$(BLUE)[+] Menggunakan apt (Termux/Ubuntu/Debian)...$(RESET)"; \
-			pkg install -y python3.13 2>/dev/null || apt update && apt install -y python3.13; \
-		elif command -v pkg &> /dev/null; then \
-			echo -e "$(BLUE)[+] Menggunakan pkg (Termux)...$(RESET)"; \
-			pkg update -y && pkg install -y python3.13; \
-		else \
-			echo -e "$(RED)[!] Tidak ada package manager yang dikenali$(RESET)"; \
-			echo -e "$(YELLOW)[!] Install Python $(TARGET_PYTHON_VERSION) secara manual$(RESET)"; \
-			exit 1; \
-		fi; \
-		if command -v python3.13 &> /dev/null; then \
-			echo -e "$(GREEN)[✓] Python $(TARGET_PYTHON_VERSION) berhasil diinstall!$(RESET)"; \
-			echo -e "$(BLUE)[+] Mengganti default Python ke 3.13...$(RESET)"; \
-			alias python3='python3.13' 2>/dev/null || true; \
-		else \
-			echo -e "$(RED)[!] Gagal menginstall Python $(TARGET_PYTHON_VERSION)$(RESET)"; \
-			exit 1; \
-		fi; \
+TARGET_PYTHON_VERSION := 3.13.5
+
+downgrade:
+	@echo "[+] Menyiapkan Python $(TARGET_PYTHON_VERSION)..."
+	@pkg install -y openssl libffi
+	@if ! command -v pyenv >/dev/null 2>&1; then \
+		echo "[!] pyenv belum terinstall."; \
+		exit 1; \
 	fi
+	@if ! pyenv versions --bare | grep -qx "$(TARGET_PYTHON_VERSION)"; then \
+		echo "[+] Menginstall Python $(TARGET_PYTHON_VERSION)..."; \
+		pyenv install $(TARGET_PYTHON_VERSION); \
+	fi
+	@pyenv global $(TARGET_PYTHON_VERSION)
+	@hash -r
+	@echo "[✓] Python aktif:"
+	@python --version
 
 check: ## Cek dependensi
 	@echo -e "$(BLUE)[+] Mengecek dependensi...$(RESET)"
