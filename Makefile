@@ -98,29 +98,9 @@ run: downgrade check
 	@chmod +x "./$(SCRIPT)"
 	@$(PYTHON) "./$(SCRIPT)"
 
-binary: ## Build binary dari Spammer.py
-	@echo -e "$(BLUE)[+] Membuild binary dari $(SCRIPT)...$(RESET)"
-	@if ! command -v pyinstaller &> /dev/null; then \
-		echo -e "$(RED)[!] PyInstaller tidak terinstall. Install dengan: pip install pyinstaller$(RESET)"; \
-		exit 1; \
-	fi
-	@pyinstaller --onefile "$(SCRIPT)" --name "$(BINARY)" --distpath . --specpath build --workpath build
-	@echo -e "$(GREEN)[✓] Binary siap: ./$(BINARY)$(RESET)"
-
 install: ## Install semua dependensi (tanpa pyinstaller error)
 	@echo -e "$(BLUE)[+] Menginstall dependensi...$(RESET)"
 	@pip install $(REQUIRED_PACKAGES)
 	@echo -e "$(GREEN)[+] Selesai!$(RESET)"
-
-venv: ## Buat virtual environment
-	@echo -e "$(BLUE)[+] Membuat virtual environment...$(RESET)"
-	@$(PYTHON) -m venv venv
-	@echo -e "$(GREEN)[+] Aktifkan dengan: source venv/bin/activate$(RESET)"
-
-clean: ## Hapus file cache dan build
-	@echo -e "$(BLUE)[+] Membersihkan...$(RESET)"
-	@rm -rf build dist __pycache__ *.pyc *.spec "$(BINARY)"
-	@echo -e "$(GREEN)[✓] Bersih!$(RESET)"
-
 # ==================== DEFAULT ====================
 .DEFAULT_GOAL := help
