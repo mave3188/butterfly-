@@ -70,7 +70,7 @@ check:
 
 # ==================== RUN ====================
 
-run: downgrade install check
+run: check
 	@clear
 	@echo -e "$(GREEN)[+] Menjalankan $(SCRIPT)...$(RESET)"
 	@if [ ! -f "$(SCRIPT)" ]; then \
