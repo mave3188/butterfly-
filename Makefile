@@ -5,9 +5,9 @@
 # ============================================================
 
 SHELL := /bin/bash
-PYTHON := python3
+
+PYTHON := python
 SCRIPT := Spammer.py
-BINARY := Spammer.bin
 TARGET_PYTHON_VERSION := 3.13.5
 
 # ==================== WARNA ====================
@@ -15,63 +15,68 @@ RED    := \033[91m
 GREEN  := \033[92m
 YELLOW := \033[93m
 BLUE   := \033[94m
-CYAN   := \033[96m
 RESET  := \033[0m
-BOLD   := \033[1m
 
 # ==================== DEPENDENSI ====================
 REQUIRED_PACKAGES := requests phonenumbers rich
 
-.PHONY:  run install build check downgrade
+.PHONY: install downgrade check run help
+
+# ==================== DOWNGRADE PYTHON ====================
 
 downgrade:
-	@echo "[+] Menyiapkan Python $(TARGET_PYTHON_VERSION)..."
-	@pkg install -y openssl libffi
-	@if ! command -v pyenv >/dev/null 2>&1; then \
-		echo "[!] pyenv belum terinstall."; \
-		exit 1; \
+	@echo -e "$(BLUE)[+] Menyiapkan Python $(TARGET_PYTHON_VERSION)...$(RESET)"
+	@pkg install -y openssl libffi zlib clang make curl
+
+	@if [ ! -d "$$HOME/.pyenv" ]; then \
+		echo -e "$(YELLOW)[+] Install pyenv...$(RESET)"; \
+		curl https://pyenv.run | bash; \
 	fi
-	@if ! pyenv versions --bare | grep -qx "$(TARGET_PYTHON_VERSION)"; then \
-		echo "[+] Menginstall Python $(TARGET_PYTHON_VERSION)..."; \
+
+	@export PYENV_ROOT="$$HOME/.pyenv"; \
+	export PATH="$$PYENV_ROOT/bin:$$PATH"; \
+	eval "$$(pyenv init -)"; \
+	if ! pyenv versions --bare | grep -qx "$(TARGET_PYTHON_VERSION)"; then \
+		echo -e "$(YELLOW)[+] Install Python $(TARGET_PYTHON_VERSION)...$(RESET)"; \
 		pyenv install $(TARGET_PYTHON_VERSION); \
-	fi
-	@pyenv global $(TARGET_PYTHON_VERSION)
-	@hash -r
-	@echo "[✓] Python aktif:"
+	fi; \
+	pyenv global $(TARGET_PYTHON_VERSION)
+
+	@echo -e "$(GREEN)[✓] Python aktif:$(RESET)"
 	@python --version
 
-check: ## Cek dependensi
-	@echo -e "$(BLUE)[+] Mengecek dependensi...$(RESET)"
-	@MISSING=""; \
-	for pkg in $(REQUIRED_PACKAGES); do \
-		if $(PYTHON) -c "import $$pkg" 2>/dev/null; then \
+
+# ==================== INSTALL DEPENDENSI ====================
+
+install:
+	@echo -e "$(BLUE)[+] Install dependency...$(RESET)"
+	@pip install --upgrade pip
+	@pip install $(REQUIRED_PACKAGES)
+	@echo -e "$(GREEN)[✓] Selesai!$(RESET)"
+
+
+# ==================== CHECK ====================
+
+check:
+	@echo -e "$(BLUE)[+] Mengecek dependency...$(RESET)"
+	@for pkg in $(REQUIRED_PACKAGES); do \
+		if python -c "import $$pkg" 2>/dev/null; then \
 			echo -e "$(GREEN)[✓] $$pkg$(RESET)"; \
 		else \
-			echo -e "$(RED)[✗] $$pkg (belum terinstall)$(RESET)"; \
-			MISSING="$$MISSING $$pkg"; \
+			echo -e "$(RED)[✗] $$pkg belum ada$(RESET)"; \
 		fi; \
-	done; \
-	if [ -n "$$MISSING" ]; then \
-		echo ""; \
-		echo -e "$(RED)[!] Dependensi yang kurang:$$MISSING$(RESET)"; \
-		echo -e "$(YELLOW)[!] Jalankan 'make install' untuk menginstall semua dependensi$(RESET)"; \
-		exit 1; \
-	fi
-	@echo -e "$(GREEN)[✓] Semua dependensi terinstall!$(RESET)"
+	done
 
-run: downgrade check
+
+# ==================== RUN ====================
+
+run: downgrade install check
 	@clear
 	@echo -e "$(GREEN)[+] Menjalankan $(SCRIPT)...$(RESET)"
-	@if [ ! -f "./$(SCRIPT)" ]; then \
-		echo -e "$(RED)[!] $(SCRIPT) tidak ditemukan.$(RESET)"; \
+	@if [ ! -f "$(SCRIPT)" ]; then \
+		echo -e "$(RED)[!] File $(SCRIPT) tidak ditemukan$(RESET)"; \
 		exit 1; \
 	fi
-	@chmod +x "./$(SCRIPT)"
-	@$(PYTHON) "./$(SCRIPT)"
+	@python $(SCRIPT)
 
-install: ## Install semua dependensi (tanpa pyinstaller error)
-	@echo -e "$(BLUE)[+] Menginstall dependensi...$(RESET)"
-	@pip install $(REQUIRED_PACKAGES)
-	@echo -e "$(GREEN)[+] Selesai!$(RESET)"
-# ==================== DEFAULT ====================
-.DEFAULT_GOAL := help
+
