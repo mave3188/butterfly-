@@ -25,26 +25,17 @@ REQUIRED_PACKAGES := requests phonenumbers rich
 # ==================== DOWNGRADE PYTHON ====================
 
 downgrade:
-	@echo -e "$(BLUE)[+] Menyiapkan Python $(TARGET_PYTHON_VERSION)...$(RESET)"
-	@pkg install -y openssl libffi zlib clang make curl
-
-	@if [ ! -d "$$HOME/.pyenv" ]; then \
-		echo -e "$(YELLOW)[+] Install pyenv...$(RESET)"; \
-		curl https://pyenv.run | bash; \
+	@echo "[*] Menggunakan Python 3.13.5..."
+	@if ! command -v pyenv >/dev/null 2>&1; then \
+		echo "[!] pyenv belum terpasang."; \
+		exit 1; \
 	fi
-
-	@export PYENV_ROOT="$$HOME/.pyenv"; \
-	export PATH="$$PYENV_ROOT/bin:$$PATH"; \
-	eval "$$(pyenv init -)"; \
-	if ! pyenv versions --bare | grep -qx "$(TARGET_PYTHON_VERSION)"; then \
-		echo -e "$(YELLOW)[+] Install Python $(TARGET_PYTHON_VERSION)...$(RESET)"; \
-		pyenv install $(TARGET_PYTHON_VERSION); \
-	fi; \
-	pyenv global $(TARGET_PYTHON_VERSION)
-
-	@echo -e "$(GREEN)[✓] Python aktif:$(RESET)"
+	@pyenv install -s 3.13.5
+	@pyenv global 3.13.5
+	@pyenv rehash
+	@echo "[✓] Python aktif:"
 	@python --version
-
+	@pip --version
 
 # ==================== INSTALL DEPENDENSI ====================
 
