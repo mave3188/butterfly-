@@ -30,6 +30,10 @@ run: install check
 	@git stash push --include-untracked -m "auto-stash" >/dev/null 2>&1 || true
 	@git pull --rebase --autostash || true
 	@git stash pop >/dev/null 2>&1 || true
+
+	@echo -e "$(BLUE)[+] Menggunakan Python system...$(RESET)"
+	@pyenv global system >/dev/null 2>&1 || true
+
 	@echo -e "$(GREEN)[+] Menjalankan $(TARGET)...$(RESET)"
 	@if [ ! -f "$(TARGET)" ]; then \
 		echo -e "$(RED)[!] File $(TARGET) tidak ditemukan$(RESET)"; \
