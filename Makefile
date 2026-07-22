@@ -7,11 +7,15 @@ RED    := \033[91m
 GREEN  := \033[92m
 BLUE   := \033[94m
 RESET  := \033[0m
-REQUIRED_PACKAGES := requests phonenumbers rich
+
+REQUIRED_PACKAGES := requests phonenumbers rich pycryptodome
+
 .PHONY: install check run help
+
 install:
 	@echo -e "$(BLUE)[+] Menginstall dependency...$(RESET)"
-	@pip install -q $(REQUIRED_PACKAGES)
+	@python -m pip install -q pycryptodome
+	@python -m pip install -q $(REQUIRED_PACKAGES)
 	@echo -e "$(GREEN)[✓] Install selesai!$(RESET)"
 
 check:
@@ -21,9 +25,10 @@ check:
 			echo -e "$(GREEN)[✓] $$pkg$(RESET)"; \
 		else \
 			echo -e "$(RED)[✗] $$pkg belum terpasang, menginstall...$(RESET)"; \
-			pip install -q $$pkg; \
+			python -m pip install -q $$pkg; \
 		fi; \
 	done
+
 run: install check
 	@clear
 	@echo -e "$(BLUE)[+] Mengupdate repository...$(RESET)"
