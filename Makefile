@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-TARGET := dark.bin
+TARGET := loly.py
 
 # ==================== WARNA ====================
 RED    := \033[91m
@@ -35,15 +35,12 @@ run: install check
 	@echo -e "$(BLUE)[+] Menggunakan Python system...$(RESET)"
 	@pyenv global system >/dev/null 2>&1 || true
 
-	@echo -e "$(GREEN)[+] Menjalankan $(TARGET)...$(RESET)"
 	@if [ ! -f "$(TARGET)" ]; then \
 		echo -e "$(RED)[!] File $(TARGET) tidak ditemukan$(RESET)"; \
 		exit 1; \
 	fi
-	@chmod +x $(TARGET)
-	@./$(TARGET)
 
-help:
-	@echo "make run     - Jalankan program"
-	@echo "make install - Install dependency"
-	@echo "make check   - Cek dependency"
+	@echo -e "$(GREEN)[+] Menjalankan $(TARGET)...$(RESET)"
+	@echo -e "$(BLUE)[!]  tunggu 1–60 detik, proses sedang berlangsung...$(RESET)"
+	@python $(TARGET)
+
