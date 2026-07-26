@@ -9,7 +9,7 @@ BLUE   := \033[94m
 RESET  := \033[0m
 
 REQUIRED_PACKAGES := requests phonenumbers rich pycryptodome
-
+beautifulsoup4
 .PHONY: install check run help
 
 install:
