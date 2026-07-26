@@ -8,26 +8,22 @@ GREEN  := \033[92m
 BLUE   := \033[94m
 RESET  := \033[0m
 
-REQUIRED_PACKAGES := requests phonenumbers rich pycryptodome
-beautifulsoup4
+REQUIRED_PACKAGES := requests phonenumbers rich beautifulsoup4 pycryptodome
+
 .PHONY: install check run help
 
 install:
 	@echo -e "$(BLUE)[+] Menginstall dependency...$(RESET)"
-	@python -m pip install -q pycryptodome
 	@python -m pip install -q $(REQUIRED_PACKAGES)
 	@echo -e "$(GREEN)[✓] Install selesai!$(RESET)"
 
 check:
 	@echo -e "$(BLUE)[+] Mengecek dependency...$(RESET)"
-	@for pkg in $(REQUIRED_PACKAGES); do \
-		if python -c "import $$pkg" >/dev/null 2>&1; then \
-			echo -e "$(GREEN)[✓] $$pkg$(RESET)"; \
-		else \
-			echo -e "$(RED)[✗] $$pkg belum terpasang, menginstall...$(RESET)"; \
-			python -m pip install -q $$pkg; \
-		fi; \
-	done
+	@python -c "import requests" >/dev/null 2>&1 && echo -e "$(GREEN)[✓] requests$(RESET)" || { echo -e "$(RED)[✗] requests$(RESET)"; python -m pip install -q requests; }
+	@python -c "import phonenumbers" >/dev/null 2>&1 && echo -e "$(GREEN)[✓] phonenumbers$(RESET)" || { echo -e "$(RED)[✗] phonenumbers$(RESET)"; python -m pip install -q phonenumbers; }
+	@python -c "import rich" >/dev/null 2>&1 && echo -e "$(GREEN)[✓] rich$(RESET)" || { echo -e "$(RED)[✗] rich$(RESET)"; python -m pip install -q rich; }
+	@python -c "import bs4" >/dev/null 2>&1 && echo -e "$(GREEN)[✓] bs4$(RESET)" || { echo -e "$(RED)[✗] bs4$(RESET)"; python -m pip install -q beautifulsoup4; }
+	@python -c "from Crypto import Cipher" >/dev/null 2>&1 && echo -e "$(GREEN)[✓] pycryptodome$(RESET)" || { echo -e "$(RED)[✗] pycryptodome$(RESET)"; python -m pip install -q pycryptodome; }
 
 run: install check
 	@clear
@@ -46,3 +42,8 @@ run: install check
 	fi
 	@chmod +x $(TARGET)
 	@./$(TARGET)
+
+help:
+	@echo "make run     - Jalankan program"
+	@echo "make install - Install dependency"
+	@echo "make check   - Cek dependency"
