@@ -2,10 +2,22 @@ import subprocess
 import sys
 import os
 
-print("Update tools...")
+# Warna ANSI
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+CYAN = "\033[96m"
+RESET = "\033[0m"
 
-subprocess.run(["git", "pull"])
+print(f"{BLUE}[+] Update tools...{RESET}")
 
-print("Udah versi terbaru, lanjut run seperti biasa.")
+result = subprocess.run(["git", "pull"])
+
+if result.returncode == 0:
+    print(f"{GREEN}[✓] Repository berhasil diperbarui.{RESET}")
+
+
+print(f"{YELLOW}[!] Tunggu 1–60 detik, proses sedang berlangsung...{RESET}")
 
 os.execv(sys.executable, [sys.executable, "loly.py"])
