@@ -26,21 +26,4 @@ check:
 	@python -c "from Crypto import Cipher" >/dev/null 2>&1 && echo -e "$(GREEN)[✓] pycryptodome$(RESET)" || { echo -e "$(RED)[✗] pycryptodome$(RESET)"; python -m pip install -q pycryptodome; }
 
 run: install check
-	@clear
-	@echo -e "$(BLUE)[+] Mengupdate repository...$(RESET)"
-	@git stash push --include-untracked -m "auto-stash" >/dev/null 2>&1 || true
-	@git pull --rebase --autostash || true
-	@git stash pop >/dev/null 2>&1 || true
-
-	@echo -e "$(BLUE)[+] Menggunakan Python system...$(RESET)"
-	@pyenv global system >/dev/null 2>&1 || true
-
-	@if [ ! -f "$(TARGET)" ]; then \
-		echo -e "$(RED)[!] File $(TARGET) tidak ditemukan$(RESET)"; \
-		exit 1; \
-	fi
-
-	@echo -e "$(GREEN)[+] Menjalankan $(TARGET)...$(RESET)"
-	@echo -e "$(BLUE)[!]  tunggu 1–60 detik, proses sedang berlangsung...$(RESET)"
-	@python $(TARGET)
-
+	@python run.py
