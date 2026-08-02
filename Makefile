@@ -8,7 +8,7 @@ GREEN  := \033[92m
 BLUE   := \033[94m
 RESET  := \033[0m
 
-REQUIRED_PACKAGES := requests phonenumbers rich beautifulsoup4 pycryptodome
+REQUIRED_PACKAGES := requests phonenumbers rich beautifulsoup4 pycryptodome fake-useragent
 
 .PHONY: install check run help
 
