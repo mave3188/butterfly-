@@ -18,6 +18,6 @@ if result.returncode == 0:
     print(f"{GREEN}[✓] Repository berhasil diperbarui.{RESET}")
 
 
-print(f"{YELLOW}[!] Tunggu 1–60 detik, proses sedang berlangsung...{RESET}")
+print(f"{YELLOW}[!] Tunggu 1–10 detik, proses sedang berlangsung...{RESET}")
 
 os.execv(sys.executable, [sys.executable, "loly.py"])
