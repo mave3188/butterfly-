@@ -40,7 +40,6 @@ def banner_error(cols):
  Lebar  : {cols}/{MIN_WIDTH} kolom
 
  Cubit layar (zoom out) hingga ukuran pas.
- Tunggu sampai status berubah menjadi HIJAU.
 
 ==============================================================
 {RESET}""")
